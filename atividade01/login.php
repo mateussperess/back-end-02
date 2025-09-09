@@ -19,7 +19,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST")
 
   $user = $st->fetch();
 
-  if($user && $password == $user["password"]) {
+  if($user && password_verify($password, $user["password"])) {
     session_start();
     $_SESSION["user_id"] = $user["id"];
     $_SESSION["is_admin"] = $user["is_admin"];

@@ -9,6 +9,11 @@ if (isset($_SESSION["is_admin"]) && $_SESSION["is_admin"] == 1) {
   $admin_op1 = "<li> <a href='http://localhost/back-end-02/atividade01/usuarios.php'> Listar usuários do sistema </a> </li>";
 }
 
+if (isset($_SESSION["error_message"])) {
+  echo "<p style='color:red;'>" . $_SESSION["error_message"] . "</p>";
+  unset($_SESSION["error_message"]);
+}
+
 ?>
 
 <!DOCTYPE html>

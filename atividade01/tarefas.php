@@ -10,13 +10,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $title = $_POST["title"];
   $is_urgent = $_POST["is_urgent"] ?? "0";
 
-  $sql = "INSERT INTO tasks (title, is_urgent, is_completed, userId, created_at) VALUES (:title, :is_urgent, :is_completed, :userId, :created_at)";
+  $sql = "INSERT INTO tasks (title, is_urgent, is_completed, user_id, created_at) VALUES (:title, :is_urgent, :is_completed, :user_id, :created_at)";
   $st = $conn->prepare($sql);
   $st->execute([
     "title" => $title,
     "is_urgent" => $is_urgent,
     "is_completed" => 0,
-    "userId" => $_SESSION["user_id"],
+    "user_id" => $_SESSION["user_id"],
     "created_at" => date("Y-m-d H:i:s")
   ]);
 
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-  $sql = "SELECT * FROM tasks WHERE userId = :user_id AND is_completed = :is_completed";
+  $sql = "SELECT * FROM tasks WHERE user_id = :user_id AND is_completed = :is_completed";
   $st = $conn->prepare($sql);
   $st->execute([
     "user_id" => $_SESSION["user_id"],
@@ -67,16 +67,22 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   </h3>
 
   <ul>
-    <?php 
-      foreach($tasks as $task => $valor)
-      {
+    <?php
+    foreach ($tasks as $task => $valor) {
+
+      if ($valor["is_urgent"] == 1) {
+        echo "<li style='color: red'> {$valor["title"]} </li>";
+      } else {
         echo "<li> {$valor["title"]} </li>";
-        echo 
-        "<form action='concluir.php' method='post'>
+      }
+
+      echo "
+        <form action='concluir.php' method='post'>
           <input type='hidden' name='task_id' value='{$valor["id"]}'>
           <button type='submit'> Concluir tarefa</button>
-        </form>";
-      }
+        </form>
+      ";
+    }
     ?>
   </ul>
 

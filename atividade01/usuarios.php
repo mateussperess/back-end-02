@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // var_dump($users);
 
   } else {
+    $_SESSION["error_message"] = "Você não tem autorização para acessar esse recurso.";
     header("Location: index.php");
   }
 }
