@@ -23,15 +23,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $success = "Tarefa cadastrada com sucesso!";
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-  $sql = "SELECT * FROM tasks WHERE user_id = :user_id AND is_completed = :is_completed";
-  $st = $conn->prepare($sql);
-  $st->execute([
-    "user_id" => $_SESSION["user_id"],
-    "is_completed" => "0"
-  ]);
+$sql = "SELECT * FROM tasks WHERE user_id = :user_id AND is_completed = :is_completed";
+$st = $conn->prepare($sql);
+$st->execute([
+  "user_id" => $_SESSION["user_id"],
+  "is_completed" => "0"
+]);
 
-  $tasks = $st->fetchAll();
+$tasks = $st->fetchAll();
+
+if($_SERVER["REQUEST_METHOD"] == "GET") {
   $success = "Lista de Tarefas";
 }
 
