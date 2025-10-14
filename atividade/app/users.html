@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles.css">
+    <title>Usuários</title>
+</head>
+<body>
+    <main id="container">       
+        <h1>Listagem de Usuários</h1> 
+        <section id="filter-section">
+            <form id="filter-form">
+                <input type="text" id="name-filter" name="name" placeholder="Filtra por nome...">
+                <button id="filter-button" class="filter-button">Filtrar</button>
+                <button id="clear-button" class="clear-button">Limpar</button>
+            </form>
+            <button id="add-user-button" class="add-button">Adicionar</button>
+        </section>
+        <section id="table-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th class="column-centered">Admin</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <!-- Linhas da tabela serão inseridas aqui via JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script type="module">
+        let users = [];
+        const tableBody = document.querySelector('#user-table-body');
+
+        async function loadUsers(params = {}) {
+            try {
+                // define a URL da API com parâmetros de consulta, se houver
+                let url = '/api/users/list.php';
+                if (params) {
+                    url += '?' + new URLSearchParams(params).toString();
+                }
+
+                // Envia a requisição para a API
+                const response = await fetch(url);
+
+                // Verifica se a resposta foi bem-sucedida
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao buscar os usuários');
+                }
+
+                // Obtém os dados em formato JSON
+                users = await response.json();
+
+                // Renderiza a tabela com os dados obtidos
+                renderTable();
+            } catch (error) {
+                tableBody.innerHTML = '<tr><td colspan="4">Erro ao buscar os usuários</td></tr>';
+                console.error(error);               
+            }                       
+        }
+
+        function renderTable() {                            
+            // Limpa a tabela
+            tableBody.innerHTML = '';
+
+            if (users.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4">Nenhum usuário encontrado!</td></tr>';
+                return;
+            }
+
+            // Preenche a tabela com um fragmento (melhor performance)
+            const fragment = document.createDocumentFragment();
+            users.forEach(user => {
+                const row = document.createElement('tr');
+
+                const tdName = document.createElement('td');
+                tdName.textContent = user.name;
+                const tdEmail = document.createElement('td');
+                tdEmail.textContent = user.email;
+                const tdIsAdmin = document.createElement('td');
+                tdIsAdmin.classList.add('column-centered');
+                tdIsAdmin.textContent = user.is_admin ? 'Sim' : 'Não';
+                const tdActions = document.createElement('td');
+
+                row.appendChild(tdName);
+                row.appendChild(tdEmail);
+                row.appendChild(tdIsAdmin);
+                row.appendChild(tdActions);
+
+                const editButton = document.createElement('button');
+                editButton.classList.add('action-button');
+                editButton.onclick = () =>  { window.location.href = `user-form.html?id=${user.id}`; }
+                editButton.innerHTML = '<img src="./assets/edit.png" alt="Editar" />';
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('action-button');
+                deleteButton.onclick = () => deleteUser(user.id);
+                deleteButton.innerHTML = '<img src="./assets/delete.png" alt="Excluir" />';
+
+                const adminButton = document.createElement('button');
+                adminButton.classList.add('action-button');
+                adminButton.onclick = () => setAdmin(user.id, !user.is_admin);
+                adminButton.innerHTML = '<img src="./assets/admin.png" alt="Admin" />';
+
+                tdActions.appendChild(editButton);
+                tdActions.appendChild(deleteButton);
+                tdActions.appendChild(adminButton);
+
+                fragment.appendChild(row);
+            });
+            tableBody.appendChild(fragment);
+        }
+
+        loadUsers();
+
+        // Filtrar por nome
+        document.querySelector('#filter-form').addEventListener('submit', event => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const params = Object.fromEntries(formData);
+            loadUsers(params);
+        });
+
+        // Limpar filtro
+        document.querySelector('#clear-button').addEventListener('click', event => {
+            event.preventDefault();
+            document.querySelector('#name-filter').value = '';
+            loadUsers();
+        });
+
+        // Adicionar novo usuário
+        document.querySelector('#add-user-button').addEventListener('click', () => {
+            window.location.href = 'user-form.html';
+        });
+
+        // Excluir usuário
+        async function deleteUser(userId) {
+            if (!confirm('Tem certeza que deseja deletar este usuário?')) {
+                return;
+            }
+            try {
+                const url = `/api/users/delete.php?id=${userId}`;
+                const response = await fetch(url, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) { 
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao excluir o usuário');
+                }
+                
+                alert('Usuário excluído com sucesso!');
+                document.querySelector('#name-filter').value = '';
+                loadUsers();
+            } catch (error) {
+                alert('Erro ao excluir o usuário');
+                console.error(error);
+            }
+        }
+
+        async function setAdmin(userId, isAdmin) {
+            if (!confirm(`Tem certeza que deseja ${!isAdmin ? 'remover' : 'definir'} este usuário como administrador?`)) {
+                return;
+            }
+            try {
+                const userData = { is_admin: isAdmin ? 1 : 0 };
+
+                const url = `/api/users/set_admin.php?id=${userId}`;
+                const response = await fetch(url, {
+                    method: 'PATCH',
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) { 
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao definir o status de administrador');
+                }
+
+                alert('Status de administrador atualizado com sucesso!');
+                document.querySelector('#name-filter').value = '';
+                loadUsers();
+            } catch (error) {
+                alert('Erro ao atualizar o status de administrador');
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>

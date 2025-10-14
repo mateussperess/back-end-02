@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuário</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <main id="container">
+        <h1 id="page-title"></h1>
+        <form id="user-form" class="edit-form">
+            <div>
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <label for="is-admin">Administrador:</label>
+                <input type="checkbox" id="is-admin" name="is_admin">
+            </div>
+            <div class="form-buttons">
+                <button type="button" id="cancel-button" class="cancel-button">Cancelar</button>
+                <button type="submit" id="save-button" class="save-button">Salvar</button>
+            </div>
+        </form>
+    </main>
+    <script type="module">
+        const pageTitle = document.querySelector('#page-title');
+        const id = new URLSearchParams(window.location.search).get('id');
+
+        async function loadUserData() {            
+            try {
+                const url = `/api/users/get.php?id=${id}`;
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao buscar os dados do usuário');
+                }
+                const user = await response.json();
+                document.querySelector('#name').value = user.name;
+                document.querySelector('#email').value = user.email;
+                document.querySelector('#password').value = '';
+                document.querySelector('#is-admin').checked = user.is_admin;
+            } catch (error) {
+                alert('Erro ao carregar os dados do usuário.');
+                console.error(error);
+            }
+        }
+
+        if (id) {
+            pageTitle.textContent = 'Editar Usuário';
+            document.querySelector('#password').required = false;
+            loadUserData();
+        } else {
+            pageTitle.textContent = 'Adicionar Usuário';
+        }   
+
+        // Manipulação do envio do formulário
+        async function saveUser(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const userData = {
+                name: formData.get('name').trim(),
+                email: formData.get('email').trim(),
+                password: formData.get('password').trim(),
+                is_admin: formData.get('is_admin') === 'on' ? 1 : 0
+            };            
+
+            const url = id ? '/api/users/update.php?id=' + id : '/api/users/add.php';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                // Verifica se a resposta foi bem-sucedida
+                if (!response.ok) { 
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao salvar os dados do usuário');
+                }
+
+                alert('Usuário salvo com sucesso.');
+                window.location.href = 'users.html';
+            } catch (error) {
+                alert('Erro ao salvar os dados do usuário.');
+                console.error(error);
+            }            
+        }
+
+        document.querySelector('#user-form').addEventListener('submit', saveUser);
+        document.querySelector('#cancel-button').addEventListener('click', () => {
+            window.location.href = 'users.html';
+        });
+
+    </script>
+</body>
+</html>
