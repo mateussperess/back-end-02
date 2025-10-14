@@ -1,25 +1,25 @@
 # LISTAR USUÁRIOS - CORRETO
-GET http://localhost/api/users/list.php HTTP/1.1
+GET http://localhost/back-end-02/atividade/api/users/list.php HTTP/1.1
 ### 
 
 # LISTAR USUÁRIOS - METHOD NOT ALLOWED
-POST http://localhost/api/users/list.php HTTP/1.1
+POST http://localhost/back-end-02/atividade/api/users/list.php HTTP/1.1
 ### 
 
 # OBTER USUÁRIO - CORRETO
-GET http://localhost/api/users/get.php?id=1 HTTP/1.1
+GET http://localhost/back-end-02/atividade/api/users/get.php?id=1 HTTP/1.1
 ###
 
 # OBTER USUÁRIO - BAD REQUEST (ID INVÁLIDO)
-GET http://localhost/api/users/get.php?id=aaa HTTP/1.1
+GET http://localhost/back-end-02/atividade/api/users/get.php?id=aaa HTTP/1.1
 ###
 
 # OBTER USUÁRIO - NOT FOUND
-GET http://localhost/api/users/get.php?id=999 HTTP/1.1
+GET http://localhost/back-end-02/atividade/api/users/get.php?id=999 HTTP/1.1
 ###
 
 # ADICIONAR USUÁRIO - CORRETO NA PRIMEIRA VEZ, CONFLICT NA SEGUNDA
-POST http://localhost/api/users/add.php HTTP/1.1
+POST http://localhost/back-end-02/atividade/api/users/add.php HTTP/1.1
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 ###
 
 # ADICIONAR USUÁRIO - CORPO INVÁLIDO (FALTANDO CAMPOS)
-POST http://localhost/api/users/add.php HTTP/1.1
+POST http://localhost/back-end-02/atividade/api/users/add.php HTTP/1.1
 Content-Type: application/json
 
 {
@@ -42,14 +42,14 @@ Content-Type: application/json
 ###
 
 # ADICIONAR USUÁRIO - CORPO INVÁLIDO (FORMATO ERRADO)
-POST http://localhost/api/users/add.php HTTP/1.1
+POST http://localhost/back-end-02/atividade/api/users/add.php HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 name=Haroldo&email=haroldo%40email.com&password=haroldo&is_admin=0
 ###
 
 # ATUALIZAR USUÁRIO - CORRETO
-PUT http://localhost/api/users/update.php?id=3 HTTP/1.1
+PUT http://localhost/back-end-02/atividade/api/users/update.php?id=3 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -60,7 +60,7 @@ Content-Type: application/json
 ###
 
 # ATUALIZAR USUÁRIO - BAD REQUEST (FALTANDO CAMPOS)
-PUT http://localhost/api/users/update.php?id=3 HTTP/1.1
+PUT http://localhost/back-end-02/atividade/api/users/update.php?id=3 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -70,7 +70,7 @@ Content-Type: application/json
 ###
 
 # ATUALIZAR USUÁRIO - CONFLICT (EMAIL JÁ EXISTE)
-PUT http://localhost/api/users/update.php?id=3 HTTP/1.1
+PUT http://localhost/back-end-02/atividade/api/users/update.php?id=3 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -82,7 +82,7 @@ Content-Type: application/json
 ###
 
 # ATUALIZAR USUÁRIO - NOT FOUND 
-PUT http://localhost/api/users/update.php?id=999 HTTP/1.1
+PUT http://localhost/back-end-02/atividade/api/users/update.php?id=999 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -94,15 +94,15 @@ Content-Type: application/json
 ###
 
 # DELETAR USUÁRIO - CORRETO DA PRIMEIRA VEZ, NOT FOUND NA SEGUNDA
-DELETE http://localhost/api/users/delete.php?id=8 HTTP/1.1
+DELETE http://localhost/back-end-02/atividade/api/users/delete.php?id=8 HTTP/1.1
 ###
 
 # DELETAR USUÁRIO - BAD REQUEST (ID INVÁLIDO)
-DELETE http://localhost/api/users/delete.php?id=aaa HTTP/1.1
+DELETE http://localhost/back-end-02/atividade/api/users/delete.php?id=aaa HTTP/1.1
 ###
 
 # SET ADMIN - CORRETO
-PATCH http://localhost/api/users/set_admin.php?id=3 HTTP/1.1
+PATCH http://localhost/back-end-02/atividade/api/users/set_admin.php?id=3 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -111,7 +111,7 @@ Content-Type: application/json
 ###
 
 # SET ADMIN - BAD REQUEST (CAMPO INVÁLIDO)
-PATCH http://localhost/api/users/set_admin.php?id=3 HTTP/1.1
+PATCH http://localhost/back-end-02/atividade/api/users/set_admin.php?id=3 HTTP/1.1
 Content-Type: application/json
 
 {

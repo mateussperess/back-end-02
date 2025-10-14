@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config.php';
 
 header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    // EXCEPTION
+    throw new NotAllowedException();
 }
 
 $sql = "SELECT id, name, email, is_admin FROM users";
