@@ -4,14 +4,14 @@ require_once __DIR__ . '/../config.php';
 
 header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // EXCEPTION
+    throw new BadRequestException();
 }
 
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
-    // EXCEPTION
+    throw new BadRequestException("Invalid JSON");
 }
 
 $name = isset($data['name']) ? trim($data['name']) : null;
@@ -20,7 +20,7 @@ $password = isset($data['password']) ? trim($data['password']) : null;
 $is_admin = isset($data['is_admin']) ? (int) $data['is_admin'] : null;
 
 if (!$name || !$email || !$password || !($is_admin === 0 || $is_admin === 1)) {
-    // EXCEPTION
+    throw new ConflictException("Missing or invalid required fields");
 }
 
 $sql = "SELECT id FROM users WHERE email = :email";
@@ -30,7 +30,7 @@ $stmt->execute();
 
 $user_with_email = $stmt->fetch();
 if ($user_with_email) {
-    // EXCEPTION
+    throw new ConflictException("Email already in use");
 }
 
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
