@@ -4,14 +4,14 @@ require_once __DIR__ . '/../config.php';
 
 header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] !== 'PUT') {
-    // EXCEPTION
+    throw new NotAllowedException();
 }
 
 $body = file_get_contents('php://input');
 $data = json_decode($body, true);
 
 if (json_last_error() !== JSON_ERROR_NONE) {
-    // EXCEPTION
+    throw new BadRequestException("Invalid JSON");
 }
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -21,7 +21,7 @@ $password = isset($data['password']) ? trim($data['password']) : null;
 $is_admin = isset($data['is_admin']) ? (int) $data['is_admin'] : null;
 
 if (!$id || !$name || !$email || !($is_admin === 0 || $is_admin === 1)) {
-    // EXCEPTION
+    throw new BadRequestException("Missing or invalid required fields");
 }
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
@@ -30,7 +30,7 @@ $stmt->execute();
 $user = $stmt->fetch();
 
 if (!$user) {
-    // EXCEPTION
+    throw new NotFoundException("User not found");
 }
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE email = :email AND id != :id");
@@ -40,7 +40,7 @@ $stmt->execute();
 $user_with_email = $stmt->fetch();
 
 if ($user_with_email) {
-    // EXCEPTION
+    throw new ConflictException("Email already in use");
 }
 
 $sql = "UPDATE users
