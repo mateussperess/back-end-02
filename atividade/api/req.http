@@ -117,3 +117,12 @@ Content-Type: application/json
 {
     "is_admin": 2
 }
+###
+
+# SET ADMIN - NOT FOUND(USUÁRIO INVÁLIDO)
+PATCH http://localhost/back-end-02/atividade/api/users/set_admin.php?id=44 HTTP/1.1
+Content-Type: application/json
+
+{
+    "is_admin": 1
+}
