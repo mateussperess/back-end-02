@@ -72,6 +72,19 @@ $usuarios = $stmt->fetchAll();
     padding: 1rem 1rem;
     border-bottom: 1px solid black;
   }
+
+  form {
+    display: flex;
+    justify-content: center;
+  }
+
+  form button {
+    font-size: 2rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+  }
 </style>
 
 <body>
@@ -79,6 +92,7 @@ $usuarios = $stmt->fetchAll();
   <p> Desenvolvido por Mateus </p>
 
   <p> Total de usuários na tabela: <?php echo count($usuarios); ?> </p>
+  <p> Relatório gerado em: <?php echo date("d/m/Y"); ?> </p>
 
   <table>
     <thead>
@@ -104,6 +118,10 @@ $usuarios = $stmt->fetchAll();
       ?>
     </tbody>
   </table>
+
+  <form action="gerar_pdf.php" method="post">
+    <button> Gerar relatório PDF </button>
+  </form>
 </body>
 
 </html>
