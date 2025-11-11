@@ -120,7 +120,7 @@ $usuarios = $stmt->fetchAll();
   </table>
 
   <form action="gerar_pdf.php" method="post">
-    <button> Gerar relatório PDF </button>
+    <button> Exportar para PDF </button>
   </form>
 </body>
 

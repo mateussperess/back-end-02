@@ -21,6 +21,7 @@ try {
   $dompdf->setPaper("A4", "portrait");
   $dompdf->loadHtml($html);
   $dompdf->render();
+  $dompdf->stream("documento.pdf");
 
   header("content-type: application/pdf");
   echo $dompdf->output();
